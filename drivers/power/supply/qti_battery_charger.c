@@ -276,13 +276,7 @@ int qti_battery_charger_get_prop(const char *name,
 
 	switch (prop_id) {
 	case BATTERY_RESISTANCE:
-		pst = &bcdev->psy_list[PSY_TYPE_BATTERY];
-		rc = read_property_id(bcdev, pst, BATT_RESISTANCE);
-		if (!rc)
-			*val = pst->prop[BATT_RESISTANCE];
-		break;
-	default:
-		break;
+		pst = &bcdev->psy_f39d06421380728421962c64aed4c1fcc6a9fe0d
 	}
 
 	return rc;
@@ -1134,6 +1128,11 @@ static int battery_psy_get_prop(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
 		pval->intval = DIV_ROUND_CLOSEST(pst->prop[prop_id], 100);
 		break;
+#ifdef CONFIG_BQ_FUEL_GAUGE
+	case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
+		pval->intval = (pst->prop[prop_id] * 60) >= 65535 ? 65535 : (pst->prop[prop_id] * 60);
+		break;
+#endif
 	default:
 		pval->intval = pst->prop[prop_id];
 		break;
