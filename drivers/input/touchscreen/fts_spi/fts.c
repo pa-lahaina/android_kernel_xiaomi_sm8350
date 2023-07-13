@@ -179,6 +179,7 @@ void release_all_touches(struct fts_ts_info *info)
 	}
 	input_sync(info->input_dev);
 	input_report_key(info->input_dev, BTN_INFO, 0);
+	update_fod_press_status(0);
 	input_sync(info->input_dev);
 #ifdef CONFIG_FTS_BOOST
 	lpm_disable_for_dev(false, EVENT_INPUT);
@@ -3242,6 +3243,7 @@ static ssize_t fts_fod_test_store(struct device *dev,
 	sscanf(buf, "%u", &value);
 	if (value) {
 		input_report_key(info->input_dev, BTN_INFO, 1);
+		update_fod_press_status(1);
 		info->fod_pressed = true;
 		input_sync(info->input_dev);
 		input_mt_slot(info->input_dev, 0);
@@ -3260,6 +3262,7 @@ static ssize_t fts_fod_test_store(struct device *dev,
 		input_mt_report_slot_state(info->input_dev, MT_TOOL_FINGER, 0);
 		input_report_abs(info->input_dev, ABS_MT_TRACKING_ID, -1);
 		input_report_key(info->input_dev, BTN_INFO, 0);
+		update_fod_press_status(0);
 		input_sync(info->input_dev);
 		last_touch_events_collect(0, 0);
 	}
@@ -3965,12 +3968,14 @@ static void fts_enter_pointer_event_handler(struct fts_ts_info *info,
 				__set_bit(touchId, &info->fod_id);
 				input_report_abs(info->input_dev, ABS_MT_WIDTH_MINOR, info->fod_overlap);
 				input_report_key(info->input_dev, BTN_INFO, 1);
+				update_fod_press_status(1);
 				input_sync(info->input_dev);
 				dsi_display_primary_request_fod_hbm(1);
 			}
 		} else if (__test_and_clear_bit(touchId, &info->fod_id)) {
 			input_report_abs(info->input_dev, ABS_MT_WIDTH_MINOR, 0);
 			input_report_key(info->input_dev, BTN_INFO, 0);
+			update_fod_press_status(0);
 			input_sync(info->input_dev);
 			dsi_display_primary_request_fod_hbm(0);
 			info->fod_x = 0;
@@ -4082,6 +4087,7 @@ static void fts_leave_pointer_event_handler(struct fts_ts_info *info,
 	if (__test_and_clear_bit(touchId, &info->fod_id)) {
 		input_report_abs(info->input_dev, ABS_MT_WIDTH_MINOR, 0);
 		input_report_key(info->input_dev, BTN_INFO, 0);
+		update_fod_press_status(0);
 		input_sync(info->input_dev);
 		dsi_display_primary_request_fod_hbm(0);
 		info->fod_coordinate_update = false;
@@ -4099,6 +4105,7 @@ static void fts_leave_pointer_event_handler(struct fts_ts_info *info,
 
 		info->fod_pressed = false;
 		input_report_key(info->input_dev, BTN_INFO, 0);
+		update_fod_press_status(0);
 		input_sync(info->input_dev);
 		dsi_display_primary_request_fod_hbm(0);
 
@@ -4494,6 +4501,7 @@ static void fts_gesture_event_handler(struct fts_ts_info *info,
 				if ((info->sensor_sleep && !info->sleep_finger) || !info->sensor_sleep) {
 					info->fod_pressed = true;
 					input_report_key(info->input_dev, BTN_INFO, 1);
+					update_fod_press_status(1);
 					input_sync(info->input_dev);
 					dsi_display_primary_request_fod_hbm(1);
 					if (info->fod_id) {
