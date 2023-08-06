@@ -104,29 +104,8 @@ extern int msm_vidc_err_recovery_disable;
 extern int msm_vidc_vpp_delay;
 
 #define dprintk(__level, sid, __fmt, ...)	\
-	do { \
-		if (is_print_allowed(sid, __level)) { \
-			if (msm_vidc_debug & VIDC_FTRACE) { \
-				char trace_logbuf[MAX_TRACER_LOG_LENGTH]; \
-				int log_length = snprintf(trace_logbuf, \
-					MAX_TRACER_LOG_LENGTH, \
-					VIDC_DBG_TAG __fmt, \
-					get_debug_level_str(__level), \
-					sid, \
-					get_codec_name(sid), \
-					##__VA_ARGS__); \
-				trace_msm_vidc_printf(trace_logbuf, \
-					log_length); \
-			} \
-			if (msm_vidc_debug & VIDC_PRINTK) { \
-				pr_info(VIDC_DBG_TAG __fmt, \
-					get_debug_level_str(__level), \
-					sid, \
-					get_codec_name(sid), \
-					##__VA_ARGS__); \
-			} \
-		} \
-	} while (0)
+	pr_debug(VIDC_DBG_TAG __fmt, get_debug_level_str(__level), sid, \
+					get_codec_name(sid), ##__VA_ARGS__)
 
 #define s_vpr_e(sid, __fmt, ...) dprintk(VIDC_ERR, sid, __fmt, ##__VA_ARGS__)
 #define s_vpr_h(sid, __fmt, ...) dprintk(VIDC_HIGH, sid, __fmt, ##__VA_ARGS__)
@@ -151,23 +130,7 @@ extern int msm_vidc_vpp_delay;
 			dprintk(VIDC_BUS, DEFAULT_SID, __fmt, ##__VA_ARGS__)
 
 #define dprintk_firmware(__level, __fmt, ...)	\
-	do { \
-		if (__level & FW_FTRACE) { \
-			char trace_logbuf[MAX_TRACER_LOG_LENGTH]; \
-			int log_length = snprintf(trace_logbuf, \
-				MAX_TRACER_LOG_LENGTH, \
-				FW_DBG_TAG __fmt, \
-				"fw", \
-				##__VA_ARGS__); \
-			trace_msm_vidc_printf(trace_logbuf, \
-				log_length); \
-		} \
-		if (__level & FW_PRINTK) { \
-			pr_info(FW_DBG_TAG __fmt, \
-				"fw", \
-				##__VA_ARGS__); \
-		} \
-	} while (0)
+	pr_debug(FW_DBG_TAG __fmt, "fw", ##__VA_ARGS__)
 
 #define dprintk_ratelimit(__level, __fmt, arg...) \
 	do { \
@@ -182,6 +145,7 @@ extern int msm_vidc_vpp_delay;
 		BUG_ON(value);					\
 	} while (0)
 
+#ifdef CONFIG_DEBUG_FS
 struct dentry *msm_vidc_debugfs_init_drv(void);
 struct dentry *msm_vidc_debugfs_init_core(struct msm_vidc_core *core,
 		struct dentry *parent);
@@ -190,6 +154,7 @@ struct dentry *msm_vidc_debugfs_init_inst(struct msm_vidc_inst *inst,
 void msm_vidc_debugfs_deinit_inst(struct msm_vidc_inst *inst);
 void msm_vidc_debugfs_update(struct msm_vidc_inst *inst,
 		enum msm_vidc_debugfs_event e);
+#endif
 int msm_vidc_check_ratelimit(void);
 int get_sid(u32 *sid, u32 session_type);
 void update_log_ctxt(u32 sid, u32 session_type, u32 fourcc);

@@ -230,7 +230,7 @@ int ll_front_merge_fn(struct request *req,  struct bio *bio,
 		unsigned int nr_segs);
 struct request *attempt_back_merge(struct request_queue *q, struct request *rq);
 struct request *attempt_front_merge(struct request_queue *q, struct request *rq);
-int blk_attempt_req_merge(struct request_queue *q, struct request *rq,
+bool blk_attempt_req_merge(struct request_queue *q, struct request *rq,
 				struct request *next);
 unsigned int blk_recalc_rq_segments(struct request *rq);
 void blk_rq_set_mixed_merge(struct request *rq);
@@ -327,13 +327,8 @@ static inline void blk_throtl_stat_add(struct request *rq, u64 time) { }
 #endif
 
 #ifdef CONFIG_BOUNCE
-extern int init_emergency_isa_pool(void);
 extern void blk_queue_bounce(struct request_queue *q, struct bio **bio);
 #else
-static inline int init_emergency_isa_pool(void)
-{
-	return 0;
-}
 static inline void blk_queue_bounce(struct request_queue *q, struct bio **bio)
 {
 }
