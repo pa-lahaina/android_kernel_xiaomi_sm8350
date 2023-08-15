@@ -2680,7 +2680,7 @@ static int fts_enable_thp_cmd (bool on)
 	return 0;
 }
 
-int fts_enable_touch_raw(bool en)
+int fts_enable_touch_raw(int en)
 {
 #ifdef TOUCH_THP_FW
 	char ret;
