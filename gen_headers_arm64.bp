@@ -863,6 +863,7 @@ gen_headers_out_arm64 = [
     "linux/netfilter_ipv4/ipt_CLUSTERIP.h",
     "linux/netfilter_ipv4/ipt_ECN.h",
     "linux/netfilter_ipv4/ipt_LOG.h",
+    "linux/netfilter_ipv4/ipt_NATTYPE.h",
     "linux/netfilter_ipv4/ipt_REJECT.h",
     "linux/netfilter_ipv4/ipt_TTL.h",
     "linux/netfilter_ipv4/ipt_ah.h",
