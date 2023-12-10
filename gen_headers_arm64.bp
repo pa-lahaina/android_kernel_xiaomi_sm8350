@@ -407,7 +407,6 @@ gen_headers_out_arm64 = [
     "linux/netfilter_arp.h",
     "linux/netfilter_bridge.h",
     "linux/netfilter_ipv4.h",
-    "linux/netfilter_ipv4/ipt_NATTYPE.h",
     "linux/netfilter_ipv4/ipt_TRIGGER.h",
     "linux/netfilter_ipv6.h",
     "linux/netlink.h",
